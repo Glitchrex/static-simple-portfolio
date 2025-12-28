@@ -6,13 +6,12 @@
 
   <title>Shikhar Pratap Singh | Senior Software Developer</title>
 
-  <!-- SEO -->
   <meta name="description" content="Senior Software Developer with experience in Java, Python, Angular, .NET and enterprise systems. Worked with Bank of America, Neuberger Berman, and Bank of New York.">
   <meta name="keywords" content="Senior Software Developer, Full Stack, Java, Python, Angular, .NET, Banking, Portfolio">
   <meta name="author" content="Shikhar Pratap Singh">
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <style>
     * { box-sizing: border-box; scroll-behavior: smooth; }
@@ -62,7 +61,7 @@
       margin-bottom: 10px;
     }
 
-    .cta, .secondary-btn {
+ .secondary-btn {
       margin-top: 24px;
       display: inline-block;
       padding: 12px 22px;
@@ -71,8 +70,7 @@
       font-weight: 600;
     }
 
-    .cta { background: linear-gradient(135deg, #6366f1, #3b82f6); color: #fff; }
-    .secondary-btn { background:#1e293b; color:#cbd5e1; border:1px solid rgba(255,255,255,.15); }
+    .secondary-btn {  background: linear-gradient(135deg, #6366f1, #3b82f6); color:#cbd5e1; border:1px solid rgba(255,255,255,0.15); }
 
     .card-section { padding: 60px; }
     .section-title { margin-bottom: 16px; }
@@ -85,11 +83,7 @@
       box-shadow: 0 25px 45px rgba(0,0,0,0.4);
     }
 
-    .prof_img {
-      width: 50%;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-    }
+    .prof_img { width: 50%; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
 
     /* TIMELINE */
     .timeline {
@@ -124,12 +118,7 @@
       background: #6366f1;
     }
 
-    .timeline-details {
-      margin-top: 12px;
-      font-size: 14px;
-      line-height: 1.6;
-      color: #cbd5e1;
-    }
+    .timeline-details { margin-top: 12px; font-size: 14px; line-height: 1.6; color: #cbd5e1; }
 
     .award-badge {
       display: inline-block;
@@ -144,30 +133,11 @@
       border: none;
     }
 
-    .list {
-      margin: 0;
-      padding-left: 18px;
-      line-height: 1.8;
-    }
+    .list { margin: 0; padding-left: 18px; line-height: 1.8; }
 
-    footer {
-      padding: 40px;
-      text-align: center;
-      color: #9ca3af;
-      border-top: 1px solid rgba(255,255,255,0.06);
-      margin-top: 40px;
-    }
+    footer { padding: 40px; text-align: center; color: #9ca3af; border-top: 1px solid rgba(255,255,255,0.06); margin-top: 40px; }
 
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-    }
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); }
 
     .modal-content {
       background-color: #0f172a;
@@ -180,26 +150,44 @@
       text-align: center;
     }
 
-    .modal-content img {
-      max-width: 100%;
-      border-radius: 10px;
-      margin-top: 15px;
-    }
-
-    .modal-close {
-      color: #a5b4fc;
-      float: right;
-      font-size: 28px;
-      cursor: pointer;
-    }
-
-    strong{
-      margin-left: 20px;
-    }
+    .modal-content img { max-width: 100%; border-radius: 10px; margin-top: 15px; }
+    .modal-close { color: #a5b4fc; float: right; font-size: 28px; cursor: pointer; }
+    strong { margin-left: 20px;}
 
     @media (max-width: 900px) {
-      .hero { grid-template-columns: 1fr; padding: 30px; text-align: center; }
+      .hero { grid-template-columns: 1fr; padding: 30px; text-align:center; }
     }
+
+    /* ---------- NEW ADDITIONS (Animations) ---------- */
+
+    /* Animated gradient on your name */
+    header h1 {
+      background: linear-gradient(120deg, #a5b4fc, #60a5fa, #34d399, #fbbf24, #a5b4fc);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shine 6s ease infinite;
+    }
+
+    @keyframes shine {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Auto reveal on scroll */
+    .reveal-auto {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+
+    .reveal-auto.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
   </style>
 </head>
 
@@ -226,7 +214,6 @@
       and building products that create real-world impact.
     </p>
 
-    <a class="cta" href="#projects">See My Work</a>
 <a class="secondary-btn" href="resume.pdf" download>Download Resume</a>
 
     <div style="margin-top: 18px;">
@@ -365,9 +352,9 @@
   <h3 class="section-title">Contact</h3>
 
   <div class="card">
-    Email: <a href="mailto:shikharpratap7@gmail.com" style="color:#a5b4fc;">shikharpratap7@gmail.com</a><br>
-    LinkedIn: <a href="https://www.linkedin.com/in/shikhar-pratap-singh/" target="_blank" style="color:#a5b4fc;">linkedin.com/in/shikhar-pratap-singh/</a><br>
-    GitHub: <a href="https://github.com/Glitchrex" target="_blank" style="color:#a5b4fc;">github.com/Glitchrex</a>
+    <i class="fas fa-envelope" style="color:#a5b4fc; margin-right: 8px;"></i><a href="mailto:shikharpratap7@gmail.com" style="color:#a5b4fc;">shikharpratap7@gmail.com</a><br>
+    <i class="fab fa-linkedin" style="color:#a5b4fc; margin-right: 8px;"></i><a href="https://www.linkedin.com/in/shikhar-pratap-singh/" target="_blank" style="color:#a5b4fc;">linkedin.com/in/shikhar-pratap-singh/</a><br>
+    <i class="fab fa-github" style="color:#a5b4fc; margin-right: 8px;"></i><a href="https://github.com/Glitchrex" target="_blank" style="color:#a5b4fc;">github.com/Glitchrex</a>
   </div>
 </section>
 
@@ -401,6 +388,18 @@
   window.onclick = function(e) {
     if (e.target.classList.contains("modal")) e.target.style.display = "none";
   }
+
+   const targets = document.querySelectorAll("section, .card, header, footer");
+
+  targets.forEach(el => el.classList.add("reveal-auto"));
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add("show");
+    });
+  }, { threshold: 0.15 });
+
+  targets.forEach(el => observer.observe(el));
 </script>
 
 </body>
