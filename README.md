@@ -25,5 +25,3 @@ It is designed to be simple, fast, and recruiter-friendly — with clear navigat
 
 ---
 
-## 📁 Project Structure
-
