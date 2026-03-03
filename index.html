@@ -18,11 +18,39 @@
   <style>
     * { box-sizing: border-box; scroll-behavior: smooth; }
 
+    /* ── VIDEO BACKGROUND ── */
+    #bg-video {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    /* Dark overlay so text stays readable */
+    #bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.55);
+      z-index: -1;
+      pointer-events: none;
+    }
+
     body {
       margin: 0;
       font-family: "Poppins", sans-serif;
-      background: linear-gradient(135deg, #0f172a, #020617);
+      background: transparent;
       color: #e5e7eb;
+    }
+
+    /* ── FROSTED GLASS MIXIN ── */
+    .glass {
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(18px) saturate(160%);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
     }
 
     header {
@@ -32,9 +60,11 @@
       padding: 20px 60px;
       position: sticky;
       top: 0;
-      background: rgba(2, 6, 23, 0.8);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      z-index: 100;
+      background: rgba(2, 6, 23, 0.5);
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
     }
 
     header nav a {
@@ -42,7 +72,10 @@
       text-decoration: none;
       color: #a5b4fc;
       font-weight: 500;
+      transition: color 0.2s;
     }
+
+    header nav a:hover { color: #e0e7ff; }
 
     .hero {
       display: grid;
@@ -53,17 +86,29 @@
       gap: 40px;
     }
 
+    /* Frosted glass panel on hero text */
+    .hero > div:first-child {
+      padding: 36px;
+      border-radius: 22px;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(18px) saturate(160%);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
     .badge {
       display: inline-block;
       padding: 8px 16px;
       border-radius: 30px;
-      background: #1e293b;
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(8px);
       color: #c7d2fe;
       margin-right: 10px;
       margin-bottom: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
     }
 
- .secondary-btn {
+    .secondary-btn {
       margin-top: 24px;
       display: inline-block;
       padding: 12px 22px;
@@ -72,17 +117,20 @@
       font-weight: 600;
     }
 
-    .secondary-btn {  background: linear-gradient(135deg, #6366f1, #3b82f6); color:#cbd5e1; border:1px solid rgba(255,255,255,0.15); }
+    .secondary-btn { background: linear-gradient(135deg, #6366f1, #3b82f6); color:#cbd5e1; border:1px solid rgba(255,255,255,0.15); }
 
     .card-section { padding: 60px; }
     .section-title { margin-bottom: 16px; }
 
+    /* Cards now use frosted glass */
     .card {
       padding: 22px;
       border-radius: 18px;
-      background: #020617;
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 25px 45px rgba(0,0,0,0.4);
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(18px) saturate(160%);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 25px 45px rgba(0,0,0,0.3);
     }
 
     .prof_img { width: 50%; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
@@ -137,15 +185,26 @@
 
     .list { margin: 0; padding-left: 18px; line-height: 1.8; }
 
-    footer { padding: 40px; text-align: center; color: #9ca3af; border-top: 1px solid rgba(255,255,255,0.06); margin-top: 40px; }
+    footer {
+      padding: 40px;
+      text-align: center;
+      color: #9ca3af;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      margin-top: 40px;
+      background: rgba(2, 6, 23, 0.5);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
 
     .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); }
 
     .modal-content {
-      background-color: #0f172a;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       margin: 5% auto;
       padding: 30px;
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.12);
       border-radius: 15px;
       width: 90%;
       max-width: 700px;
@@ -158,11 +217,12 @@
 
     @media (max-width: 900px) {
       .hero { grid-template-columns: 1fr; padding: 30px; text-align:center; }
+      header { padding: 16px 24px; }
+      .card-section { padding: 30px; }
     }
 
-    /* ---------- NEW ADDITIONS (Animations) ---------- */
+    /* ---------- ANIMATIONS ---------- */
 
-    /* Animated gradient on your name */
     header h1 {
       background: linear-gradient(120deg, #a5b4fc, #60a5fa, #34d399, #fbbf24, #a5b4fc);
       background-size: 300% 300%;
@@ -178,7 +238,6 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* Auto reveal on scroll */
     .reveal-auto {
       opacity: 0;
       transform: translateY(24px);
@@ -194,6 +253,12 @@
 </head>
 
 <body>
+
+<!-- ── BACKGROUND VIDEO ── -->
+<video id="bg-video" autoplay muted loop playsinline>
+  <source src="Shikhar.MP4" type="video/mp4">
+</video>
+<div id="bg-overlay"></div>
 
 <header>
   <h1>Shikhar Pratap Singh</h1>
@@ -217,7 +282,6 @@
       applications in banking and finance by collaborating with AI agents. Passionate about learning new technologies
       and building products that create real-world impact and solve real problems.
     </p>
-
 
     <div style="margin-top: 18px;">
       <span class="badge">Java</span>
@@ -389,8 +453,6 @@
     <span class="modal-close" onclick="closeModal('riseInstaModal')">&times;</span>
     <h2>Rise Insta Award</h2>
     <p>Recognized for outstanding contributions and learning agility.</p>
-
-    <!-- IMPORTANT: make sure this file exists beside index.html -->
     <img src="rise-insta-award.png" alt="Rise Insta Award Certificate">
   </div>
 </div>
@@ -410,8 +472,7 @@
     if (e.target.classList.contains("modal")) e.target.style.display = "none";
   }
 
-   const targets = document.querySelectorAll("section, .card, header, footer");
-
+  const targets = document.querySelectorAll("section, .card, header, footer");
   targets.forEach(el => el.classList.add("reveal-auto"));
 
   const observer = new IntersectionObserver(entries => {
