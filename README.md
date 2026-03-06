@@ -20,7 +20,7 @@ It is designed to be simple, fast, and recruiter-friendly — with clear navigat
 
 ## 🚀 Live Demo
 
-- Netlify:  https://shikharpratap.netlify.app/#contact
+- Netlify:  https://shikharpratap.netlify.app/
 - GitHub Pages: https://glitchrex.github.io/static-simple-portfolio/
 
 ---
