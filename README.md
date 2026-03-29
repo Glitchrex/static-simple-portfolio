@@ -13,6 +13,7 @@ This portfolio highlights my career journey across global banking and investment
 - Bank of America (BofA)
 - Neuberger Berman (NB)
 - Bank of New York (BNY)
+- LPL Financials (LPL)
 
 It is designed to be simple, fast, and recruiter-friendly — with clear navigation, resume access, and professional context.
 
