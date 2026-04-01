@@ -554,6 +554,53 @@
       transform: translateY(0);
     }
 
+    #volume-control {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 220;
+      width: 48px;
+      height: 48px;
+      border: none;
+      border-radius: 50%;
+      padding: 2px;
+      display: grid;
+      place-items: center;
+      color: #e5e7eb;
+      background:
+        conic-gradient(#60a5fa calc(var(--vol, 0.5) * 1turn), rgba(148, 163, 184, 0.28) 0);
+      box-shadow: 0 8px 18px rgba(2, 6, 23, 0.45);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      cursor: pointer;
+    }
+
+    #volume-control::before {
+      content: "";
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    #volume-control i {
+      position: absolute;
+      font-size: 13px;
+      pointer-events: none;
+    }
+
+    #volume-knob {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #93c5fd;
+      box-shadow: 0 0 8px rgba(96, 165, 250, 0.7);
+      transform: rotate(calc(var(--vol, 0.5) * 360deg)) translateY(-20px);
+      pointer-events: none;
+    }
+
   </style>
 </head>
 
@@ -567,6 +614,10 @@
 <div id="bg-vignette"></div>
 <div id="bg-glass"></div>
 <div id="scroll-progress"></div>
+<button id="volume-control" type="button" aria-label="Toggle volume" aria-pressed="false">
+  <i class="fas fa-volume-up" aria-hidden="true"></i>
+  <span id="volume-knob" aria-hidden="true"></span>
+</button>
 
 <header>
   <h1>Shikhar Pratap Singh</h1>
@@ -778,9 +829,10 @@
 
   window.onclick = function(e) {
     if (e.target.classList.contains("modal")) e.target.style.display = "none";
-  }
+  };
 
   const bgVideo = document.getElementById("bg-video");
+  const volumeControl = document.getElementById("volume-control");
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const scrollProgress = document.getElementById("scroll-progress");
   const navLinks = document.querySelectorAll("header nav a");
@@ -795,6 +847,26 @@
   if (bgVideo) {
     bgVideo.muted = false;
     bgVideo.volume = 0.5;
+    let previousVolume = bgVideo.volume;
+    let isDraggingVolume = false;
+    let suppressNextClick = false;
+    const setVolumeFromValue = (nextVolume) => {
+      const clamped = Math.max(0, Math.min(1, nextVolume));
+      bgVideo.volume = clamped;
+      bgVideo.muted = clamped === 0;
+      if (clamped > 0) previousVolume = clamped;
+      syncVolumeButton();
+    };
+    const syncVolumeButton = () => {
+      if (!volumeControl) return;
+      const effectiveVolume = bgVideo.muted ? 0 : bgVideo.volume;
+      volumeControl.style.setProperty("--vol", String(effectiveVolume));
+      volumeControl.setAttribute("aria-pressed", String(bgVideo.muted));
+      const icon = volumeControl.querySelector("i");
+      if (icon) {
+        icon.className = `fas ${effectiveVolume === 0 ? "fa-volume-mute" : "fa-volume-up"}`;
+      }
+    };
 
     if (prefersReducedMotion) {
       document.body.classList.add("video-fallback");
@@ -803,7 +875,14 @@
       const playPromise = bgVideo.play();
       if (playPromise !== undefined) {
         playPromise.catch(() => {
-          document.body.classList.add("video-fallback");
+          // If autoplay with sound is blocked, retry muted so video still runs.
+          bgVideo.muted = true;
+          const retryPromise = bgVideo.play();
+          if (retryPromise !== undefined) {
+            retryPromise.catch(() => {
+              document.body.classList.add("video-fallback");
+            });
+          }
         });
       }
     }
@@ -811,18 +890,83 @@
     bgVideo.addEventListener("error", () => {
       document.body.classList.add("video-fallback");
     });
+
+    if (volumeControl) {
+      syncVolumeButton();
+      volumeControl.addEventListener("click", () => {
+        if (suppressNextClick) {
+          suppressNextClick = false;
+          return;
+        }
+        if (bgVideo.muted || bgVideo.volume === 0) {
+          bgVideo.muted = false;
+          bgVideo.volume = previousVolume > 0 ? previousVolume : 0.5;
+        } else {
+          previousVolume = bgVideo.volume;
+          bgVideo.muted = true;
+        }
+        syncVolumeButton();
+      });
+
+      const updateVolumeFromPointer = (event) => {
+        const rect = volumeControl.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = event.clientX - cx;
+        const dy = event.clientY - cy;
+        const angle = Math.atan2(dy, dx) + Math.PI / 2;
+        const normalized = ((angle < 0 ? angle + Math.PI * 2 : angle) / (Math.PI * 2));
+        setVolumeFromValue(normalized);
+      };
+
+      volumeControl.addEventListener("pointerdown", (event) => {
+        const rect = volumeControl.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = event.clientX - cx;
+        const dy = event.clientY - cy;
+        const distance = Math.hypot(dx, dy);
+        const ringOuter = rect.width / 2;
+        const ringInner = ringOuter - 12;
+        if (distance >= ringInner && distance <= ringOuter + 2) {
+          isDraggingVolume = true;
+          suppressNextClick = true;
+          volumeControl.setPointerCapture(event.pointerId);
+          updateVolumeFromPointer(event);
+        }
+      });
+
+      volumeControl.addEventListener("pointermove", (event) => {
+        if (!isDraggingVolume) return;
+        updateVolumeFromPointer(event);
+      });
+
+      const stopDragging = () => {
+        isDraggingVolume = false;
+      };
+      volumeControl.addEventListener("pointerup", stopDragging);
+      volumeControl.addEventListener("pointercancel", stopDragging);
+    }
   }
 
   if (scrollProgress) {
+    let rafPending = false;
     const updateScrollProgress = () => {
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
       const width = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
       scrollProgress.style.width = `${width}%`;
+      rafPending = false;
+    };
+    const onScroll = () => {
+      if (!rafPending) {
+        rafPending = true;
+        window.requestAnimationFrame(updateScrollProgress);
+      }
     };
 
     updateScrollProgress();
-    window.addEventListener("scroll", updateScrollProgress, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
   }
 
   const sectionTargets = Array.from(navLinks)
