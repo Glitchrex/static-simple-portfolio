@@ -560,7 +560,7 @@
 <body>
 
 <!-- ── BACKGROUND VIDEO ── -->
-<video id="bg-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1">
+<video id="bg-video" autoplay loop playsinline preload="metadata" aria-hidden="true" tabindex="-1">
   <source src="scuba.mp4" type="video/mp4" />
 </video>
 <div id="bg-overlay"></div>
@@ -793,7 +793,8 @@
   };
 
   if (bgVideo) {
-    bgVideo.muted = true;
+    bgVideo.muted = false;
+    bgVideo.volume = 0.5;
 
     if (prefersReducedMotion) {
       document.body.classList.add("video-fallback");
