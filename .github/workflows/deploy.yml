@@ -19,6 +19,6 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          port: 21098
+          port: 21
           server-dir: /public_html/
           local-dir: ./        # Root of your repo — adjust if your HTML is in a subfolder
