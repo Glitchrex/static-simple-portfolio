@@ -156,6 +156,23 @@
     .reveal.left { transform: translateX(-60px); } .reveal.right { transform: translateX(60px); }
     .reveal.left.show, .reveal.right.show { transform: none; }
 
+    /* scroll-driven extras */
+    .split .w { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 .04em .14em; margin-bottom: -.14em; }
+    .split .wi { display: inline-block; transform: translateY(115%) rotate(7deg); transform-origin: left bottom; transition: transform 1s cubic-bezier(.2,.9,.2,1); transition-delay: calc(var(--wi) * 90ms); }
+    .split.show .wi { transform: none; }
+    .split em { background: none; color: inherit; }
+    .split em .wi { background: linear-gradient(90deg, var(--aqua), var(--sky)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .reveal.flip { transform: perspective(900px) rotateX(28deg) translateY(70px) scale(.94); transform-origin: 50% 100%; }
+    .reveal.flip.show { transform: none; }
+    .t-item { perspective: 1200px; }
+    .t-card { will-change: rotate, scale, opacity; }
+    #fish { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+    #fish svg { position: absolute; left: 0; top: 0; will-change: transform; }
+    #fish .tail { transform-origin: 95px 30px; animation: tail .7s ease-in-out infinite alternate; }
+    @keyframes tail { from { transform: skewY(-14deg) scaleX(.9); } to { transform: skewY(14deg) scaleX(1.05); } }
+    .reveal.show.settled { transition: none; }
+    .section-num { position: absolute; right: 2%; top: 40px; font: 700 clamp(6rem, 20vw, 16rem)/1 'Space Grotesk'; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,.12); pointer-events: none; user-select: none; will-change: translate; }
+
     /* ───── HERO ───── */
     .hero { min-height: 100vh; display: grid; align-items: center; padding-top: 130px; }
     .hero-grid { display: grid; grid-template-columns: 1.25fr .75fr; gap: 48px; align-items: center; }
@@ -206,10 +223,8 @@
 
     /* ───── MARQUEE ───── */
     .marquee { padding: 26px 0; overflow: hidden; border-block: 1px solid var(--glass-border); background: rgba(4,18,31,.35); backdrop-filter: blur(8px); }
-    .marquee-track { display: flex; gap: 56px; width: max-content; animation: scrollx 32s linear infinite; font: 700 clamp(1.4rem, 3vw, 2.2rem)/1 'Space Grotesk'; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,.5); }
+    .marquee-track { display: flex; gap: 56px; width: max-content; will-change: transform; font: 700 clamp(1.4rem, 3vw, 2.2rem)/1 'Space Grotesk'; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,.5); }
     .marquee-track span::after { content: "✦"; margin-left: 56px; color: var(--aqua); -webkit-text-stroke: 0; }
-    .marquee:hover .marquee-track { animation-play-state: paused; }
-    @keyframes scrollx { to { transform: translateX(-50%); } }
 
     /* ───── STATS ───── */
     .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; padding-block: 90px 30px; }
@@ -351,6 +366,8 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
       .reveal { opacity: 1; transform: none; filter: none; }
+      .split .wi, .reveal.flip { transform: none; }
+      #fish, .section-num { display: none; }
       .hero h1 .char { transform: none; }
       #dive { height: auto; padding: 80px 18px; }
       .dive-stage { position: static; height: auto; }
@@ -398,7 +415,7 @@
 <!-- ───── HERO ───── -->
 <section class="hero" id="home">
   <div class="wrap hero-grid">
-    <div>
+    <div id="hero-copy">
       <div class="hello glass reveal"><i></i> Open to meaningful conversations</div>
       <h1 aria-label="Shikhar Pratap Singh" id="name">
         <span class="word">Shikhar</span><br>
@@ -418,7 +435,7 @@
         <span class="badge">Angular</span><span class="badge">.NET</span><span class="badge">Springboot</span><span class="badge">SQL</span>
       </div>
     </div>
-    <div class="porthole-wrap reveal right" style="--d:500ms">
+    <div class="porthole-wrap reveal right" id="hero-photo" style="--d:500ms">
       <div class="porthole" id="porthole">
         <img src="GPic-opt.jpg" alt="Profile photo of Shikhar Pratap Singh" width="900" height="1350" fetchpriority="high" />
         <span class="float-chip c1">☁️ Cloud certified</span>
@@ -431,7 +448,7 @@
 </section>
 
 <div class="marquee" aria-hidden="true">
-  <div class="marquee-track">
+  <div class="marquee-track" id="mtrack">
     <span>Java</span><span>Spring Boot</span><span>Angular</span><span>.NET</span><span>Python</span><span>Snowflake</span><span>Docker</span><span>Microservices</span><span>SonarQube</span><span>C++</span>
     <span>Java</span><span>Spring Boot</span><span>Angular</span><span>.NET</span><span>Python</span><span>Snowflake</span><span>Docker</span><span>Microservices</span><span>SonarQube</span><span>C++</span>
   </div>
@@ -481,9 +498,10 @@
 
 <!-- ───── CAREER ───── -->
 <section id="timeline">
+  <div class="section-num" data-par="-.12" aria-hidden="true">01</div>
   <div class="wrap">
     <span class="eyebrow reveal">The journey</span>
-    <h2 class="section-title reveal">Career <em>Timeline</em></h2>
+    <h2 class="section-title split">Career <em>Timeline</em></h2>
     <div class="timeline" id="tl">
       <div class="t-line"><i></i></div>
 
@@ -538,11 +556,12 @@
 
 <!-- ───── CERTIFICATIONS ───── -->
 <section id="certifications">
+  <div class="section-num" data-par="-.12" aria-hidden="true">02</div>
   <div class="wrap">
     <span class="eyebrow reveal">Always learning</span>
-    <h2 class="section-title reveal">Certifi<em>cations</em></h2>
+    <h2 class="section-title split"><em>Certifications</em></h2>
     <div class="cred-grid">
-      <div class="cred glass spot tilt reveal" style="--d:0ms">
+      <div class="cred glass spot tilt reveal flip" style="--d:0ms">
         <div class="ico"><i class="fab fa-google"></i></div>
         <h4>Google Cloud Program — Track Certificates</h4>
         <div class="chips">
@@ -553,7 +572,7 @@
           <a class="chip" href="certifications/Shikhar pratap singh g-cloud-5.pdf" target="_blank" rel="noopener">Track 5 <i class="fas fa-arrow-up-right-from-square"></i></a>
         </div>
       </div>
-      <div class="cred glass spot tilt reveal" style="--d:100ms">
+      <div class="cred glass spot tilt reveal flip" style="--d:100ms">
         <div class="ico"><i class="fas fa-cloud"></i></div>
         <h4>Google Cloud — Completion &amp; Prep</h4>
         <div class="chips">
@@ -561,7 +580,7 @@
           <a class="chip" href="certifications/Shikhar pratap singh g-cloud-Prepatory-course.pdf" target="_blank" rel="noopener">Preparatory Course <i class="fas fa-arrow-up-right-from-square"></i></a>
         </div>
       </div>
-      <div class="cred glass spot tilt reveal" style="--d:200ms">
+      <div class="cred glass spot tilt reveal flip" style="--d:200ms">
         <div class="ico"><i class="fas fa-code"></i></div>
         <h4>Programming — Spoken Tutorials</h4>
         <div class="chips">
@@ -570,7 +589,7 @@
           <a class="chip" href="certifications/Spoken-tutorials-JAVA.pdf.pdf" target="_blank" rel="noopener">Java <i class="fas fa-arrow-up-right-from-square"></i></a>
         </div>
       </div>
-      <div class="cred glass spot tilt reveal" style="--d:300ms">
+      <div class="cred glass spot tilt reveal flip" style="--d:300ms">
         <div class="ico"><i class="fas fa-graduation-cap"></i></div>
         <h4>Udemy Courses</h4>
         <div class="chips">
@@ -589,11 +608,12 @@
 
 <!-- ───── INTERNSHIPS ───── -->
 <section id="internships">
+  <div class="section-num" data-par="-.12" aria-hidden="true">03</div>
   <div class="wrap">
     <span class="eyebrow reveal">Where it started</span>
-    <h2 class="section-title reveal"><em>Internships</em></h2>
+    <h2 class="section-title split"><em>Internships</em></h2>
     <div class="cred-grid">
-      <div class="cred glass spot tilt reveal" style="--d:0ms">
+      <div class="cred glass spot tilt reveal flip" style="--d:0ms">
         <div class="ico"><i class="fas fa-laptop-code"></i></div>
         <h4>Codify</h4>
         <div class="chips">
@@ -601,22 +621,22 @@
           <a class="chip" href="internships/Codify_Shikhar._WLpdf.pdf" target="_blank" rel="noopener">Work Letter <i class="fas fa-arrow-up-right-from-square"></i></a>
         </div>
       </div>
-      <div class="cred glass spot tilt reveal" style="--d:100ms">
+      <div class="cred glass spot tilt reveal flip" style="--d:100ms">
         <div class="ico"><i class="fas fa-building"></i></div>
         <h4>KUN Solution</h4>
         <div class="chips"><a class="chip" href="internships/KUN Solution.pdf" target="_blank" rel="noopener">View Certificate <i class="fas fa-arrow-up-right-from-square"></i></a></div>
       </div>
-      <div class="cred glass spot tilt reveal" style="--d:200ms">
+      <div class="cred glass spot tilt reveal flip" style="--d:200ms">
         <div class="ico"><i class="fas fa-gauge-high"></i></div>
         <h4>Optimize</h4>
         <div class="chips"><a class="chip" href="internships/Optimize_Certificate -Shikhar.pdf" target="_blank" rel="noopener">View Certificate <i class="fas fa-arrow-up-right-from-square"></i></a></div>
       </div>
-      <div class="cred glass spot tilt reveal" style="--d:300ms">
+      <div class="cred glass spot tilt reveal flip" style="--d:300ms">
         <div class="ico"><i class="fas fa-file-signature"></i></div>
         <h4>General Internship</h4>
         <div class="chips"><a class="chip" href="internships/Shikhar_pratap_singh.pdf" target="_blank" rel="noopener">Work Letter <i class="fas fa-arrow-up-right-from-square"></i></a></div>
       </div>
-      <div class="cred glass spot tilt reveal" style="--d:400ms">
+      <div class="cred glass spot tilt reveal flip" style="--d:400ms">
         <div class="ico"><i class="fas fa-user-check"></i></div>
         <h4>Hired</h4>
         <div class="chips">
@@ -624,7 +644,7 @@
           <a class="chip" href="internships/Shikhar_Singh_Hired_Certificate 2.pdf" target="_blank" rel="noopener">Certificate 2 <i class="fas fa-arrow-up-right-from-square"></i></a>
         </div>
       </div>
-      <div class="cred glass spot tilt reveal" style="--d:500ms">
+      <div class="cred glass spot tilt reveal flip" style="--d:500ms">
         <div class="ico"><i class="fas fa-briefcase"></i></div>
         <h4>TAM</h4>
         <div class="chips"><a class="chip" href="internships/TAM_Shikhar.pdf" target="_blank" rel="noopener">View Certificate <i class="fas fa-arrow-up-right-from-square"></i></a></div>
@@ -636,7 +656,7 @@
 <!-- ───── CONTACT ───── -->
 <section id="contact">
   <div class="wrap">
-    <div class="contact-card glass spot reveal">
+    <div class="contact-card glass spot reveal" id="contact-card">
       <span class="eyebrow">Reached the bottom</span>
       <h2>Let's build something<br><span class="grad-text" style="background:linear-gradient(90deg,var(--aqua),var(--sky),var(--sun));-webkit-background-clip:text;background-clip:text;color:transparent">remarkable.</span></h2>
       <p>Have an idea, a role, or just want to talk tech and deep-sea dives? My inbox is always open.</p>
@@ -782,7 +802,25 @@
     $$("[data-count]", e.target).forEach(countUp);
     io.unobserve(e.target);
   }), { threshold: .15, rootMargin: "0px 0px -6% 0px" });
-  $$(".reveal").forEach(el => io.observe(el));
+  /* split section titles into masked words */
+  let wi = 0;
+  const splitNode = (node, frag) => {
+    node.childNodes.forEach(c => {
+      if (c.nodeType === 3) {
+        c.textContent.split(/(\s+)/).forEach(tok => {
+          if (!tok) return;
+          if (/^\s+$/.test(tok)) { frag.appendChild(document.createTextNode(" ")); return; }
+          const w = document.createElement("span"), i = document.createElement("span");
+          w.className = "w"; i.className = "wi"; i.style.setProperty("--wi", wi++); i.textContent = tok;
+          w.appendChild(i); frag.appendChild(w);
+        });
+      } else if (c.nodeType === 1) {
+        const el = c.cloneNode(false); splitNode(c, el); frag.appendChild(el);
+      }
+    });
+  };
+  $$(".split").forEach(h => { wi = 0; h.setAttribute("aria-label", h.textContent); const f = document.createDocumentFragment(); splitNode(h, f); h.textContent = ""; h.appendChild(f); });
+  $$(".reveal, .split").forEach(el => io.observe(el));
   function countUp(el) {
     const end = +el.dataset.count, dur = 1600, s = performance.now();
     if (reduced) { el.textContent = end; return; }
@@ -864,7 +902,7 @@
     frame.style.setProperty("--vs", lerp(1.35, 1.0, open));
     hint.style.opacity = clamp(1 - p * 8);
     // cinematic extras: letterbox + HUD as it opens, glow fades once full-bleed
-    const hud = clamp((open - .75) / .25);
+    const hud = clamp((open - .75) / .25) * clamp((1 - p) / .08); // retract bars/HUD at the end so the exit is seamless
     dive.style.setProperty("--bar", (hud * 9).toFixed(2));
     dive.style.setProperty("--hud", hud.toFixed(2));
     seek.style.pointerEvents = hud > .5 ? "auto" : "none";
@@ -905,6 +943,81 @@
   addEventListener("resize", () => { if (!reduced) updateDive(); onScroll(); });
   onScroll();
   topBtn.addEventListener("click", () => scrollTo({ top: 0, behavior: "smooth" }));
+
+  /* ── Scroll FX engine (parallax, 3D cards, velocity marquee, swimming fish) ── */
+  if (!reduced) {
+    const heroCopy = $("#hero-copy"), heroPhoto = $("#hero-photo"), mtrack = $("#mtrack"), contactCard = $("#contact-card");
+    const cards = $$(".t-card"), nums = $$("[data-par]"), fishBox = document.createElement("div");
+    fishBox.id = "fish"; fishBox.setAttribute("aria-hidden", "true"); document.body.prepend(fishBox);
+    const fishSVG = `<svg viewBox="0 0 120 60"><defs><linearGradient id="fg" x1="0" x2="1"><stop offset="0" stop-color="#d8fbff"/><stop offset="1" stop-color="#5eead4"/></linearGradient></defs><path d="M8 30C28 4 82 4 100 30 82 56 28 56 8 30Z" fill="url(#fg)"/><path class="tail" d="M95 30L120 10Q111 30 120 50Z" fill="#5eead4"/><circle cx="30" cy="25" r="3" fill="#04121f"/></svg>`;
+    const fish = [
+      { s: 70, y: .22, sp: .55, dir: 1, o: .22, b: 2, ph: 0 }, { s: 120, y: .62, sp: .9, dir: -1, o: .3, b: 0, ph: 600 },
+      { s: 46, y: .42, sp: .35, dir: -1, o: .16, b: 3, ph: 300 }, { s: 150, y: .8, sp: .75, dir: 1, o: .34, b: 0, ph: 1100 },
+      { s: 58, y: .12, sp: .45, dir: 1, o: .2, b: 2, ph: 900 }
+    ].map(f => {
+      const id = "fg" + Math.random().toString(36).slice(2, 7), w = document.createElement("div");
+      w.innerHTML = fishSVG.replaceAll("fg", id); const svg = w.firstChild;
+      svg.style.cssText = `width:${f.s}px;height:${f.s / 2}px;opacity:${f.o};filter:blur(${f.b}px)`;
+      fishBox.appendChild(svg);
+      return { ...f, svg };
+    });
+
+    let mx = 0, vel = 0, prevY = scrollY, sy = scrollY;
+    const frameFx = t => {
+      sy += (scrollY - sy) * .12;                          // inertial copy of scroll for silky parallax
+      const rawV = scrollY - prevY; prevY = scrollY;
+      vel += (rawV - vel) * .12;
+      const vh = innerHeight, pHero = clamp(sy / vh);
+
+      if (pHero < 1.05) {                                  // hero exits with depth
+        heroCopy.style.translate = `0 ${-pHero * 70}px`;
+        heroCopy.style.opacity = clamp(1 - pHero * 1.25);
+        heroCopy.style.scale = 1 - pHero * .06;
+        heroPhoto.style.translate = `0 ${pHero * 140}px`;
+        heroPhoto.style.rotate = `${pHero * 7}deg`;
+        heroPhoto.style.scale = 1 - pHero * .18;
+      }
+
+      // marquee: drifts on its own, accelerates + skews with scroll velocity
+      const half = mtrack.scrollWidth / 2;
+      mx = (mx - (.8 + Math.abs(vel) * .9)) % half;
+      mtrack.style.transform = `translateX(${mx}px) skewX(${clamp(vel / 40, -1, 1) * -14}deg)`;
+
+      // 3D timeline cards: swing in from the side, shrink away as they leave
+      cards.forEach(c => {
+        const r = c.getBoundingClientRect();
+        if (r.bottom < -100 || r.top > vh + 100) return;
+        const enter = ease(clamp((vh - r.top) / (vh * .55)));
+        const side = c.parentElement.classList.contains("r") ? 1 : -1;
+        c.style.rotate = `0 1 0 ${(1 - enter) * side * -38}deg`;
+        c.style.scale = String(.86 + .14 * enter);
+        c.style.opacity = String(.25 + .75 * enter);
+      });
+
+      // big section numerals + deep parallax
+      nums.forEach(n => {
+        const r = n.parentElement.getBoundingClientRect();
+        n.style.translate = `0 ${(r.top + r.height / 2 - vh / 2) * +n.dataset.par}px`;
+      });
+
+      // contact card grows into view
+      const cr = contactCard.getBoundingClientRect();
+      contactCard.style.scale = String(.9 + .1 * ease(clamp((vh - cr.top) / (vh * .7))));
+
+      // fish swim with scroll and drift on their own; flip with direction
+      const W = innerWidth;
+      fish.forEach(f => {
+        const range = W + f.s * 2 + 200;
+        let pos = (f.ph + sy * f.sp + t * .02 * f.dir * (f.s / 60)) % range; if (pos < 0) pos += range;
+        const x = f.dir > 0 ? pos - f.s - 100 : W + 100 - pos;
+        const y = f.y * vh + Math.sin(t / 1100 + f.ph) * 18;
+        // head is on the left in the artwork; flip when travelling right
+        f.svg.style.transform = `translate3d(${x}px,${y}px,0) scaleX(${f.dir > 0 ? -1 : 1})`;
+      });
+      requestAnimationFrame(frameFx);
+    };
+    requestAnimationFrame(frameFx);
+  }
 
   /* ── Active nav ── */
   const links = $$("nav a");
